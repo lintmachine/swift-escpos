@@ -1,5 +1,5 @@
 //
-//  Commands.swift
+//  ESCPOSCommand.swift
 //  
 //
 //  Created by Jacob Ingalls on 6/1/22.

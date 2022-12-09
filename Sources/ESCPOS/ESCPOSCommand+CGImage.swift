@@ -1,19 +1,15 @@
 //
-//  Commands+Graphics.swift
+//  ESCPOSCommand+CGImage.swift
 //  
 //
 //  Created by Jacob Ingalls on 6/26/22.
 //
 
 import Foundation
-
-#if canImport(AppKit)
-import AppKit
+import CoreGraphics
 
 public extension ESCPOSCommand {
-    static func printMonochromePhoto(image: NSImage) throws -> ESCPOSCommand {
-        let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil)!
-        
+    static func printMonochromePhoto(image cgImage: CGImage) throws -> ESCPOSCommand {
         var bits: [[Bool]] = []
         let pointer = CFDataGetBytePtr(cgImage.dataProvider!.data)!
         let width = Int(cgImage.width)
@@ -61,4 +57,3 @@ public extension ESCPOSCommand {
         ])
     }
 }
-#endif
