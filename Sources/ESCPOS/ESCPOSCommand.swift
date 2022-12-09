@@ -8,7 +8,7 @@
 import Foundation
 
 /// - See Also: https://www.epson-biz.com/modules/ref_escpos/index.php?cat_id=2
-public enum ESCPOSCommand {
+public enum ESCPOSCommand: Equatable, Sendable {
     
     // MARK: - Fallthrough Commands
     case raw(Data)
@@ -394,7 +394,7 @@ public enum ESCPOSCommand {
     }
     
     /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=23
-    public struct PrintMode: OptionSet {
+    public struct PrintMode: OptionSet, Sendable {
         public let rawValue: UInt8
         
         public static let alternateFont         = PrintMode(rawValue: 1 << 0)
@@ -411,14 +411,14 @@ public enum ESCPOSCommand {
     }
     
     /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=24
-    public enum UnderlineMode: UInt8 {
+    public enum UnderlineMode: UInt8, Sendable {
         case off   = 0
         case thin  = 1
         case thick = 2
     }
     
     /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=27
-    public enum CharacterFont: UInt8 {
+    public enum CharacterFont: UInt8, Sendable {
         case a = 0
         case b = 1
         case c = 2
@@ -429,7 +429,7 @@ public enum ESCPOSCommand {
     }
     
     /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=29
-    public enum InternationalCharacterSet: UInt8 {
+    public enum InternationalCharacterSet: UInt8, Sendable {
         case unitedStates        = 0
         case france              = 1
         case germany             = 2
@@ -462,20 +462,20 @@ public enum ESCPOSCommand {
     }
     
     /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=30
-    public enum RotationMode: UInt8 {
+    public enum RotationMode: UInt8, Sendable {
         case off           = 0
         case enabledNarrow = 1
         case enabledWide   = 2
     }
     
     /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=31
-    public enum PrintColor: UInt8 {
+    public enum PrintColor: UInt8, Sendable {
         case black = 0
         case red = 1
     }
     
     /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=32
-    public enum CharacterCodeTable: UInt8 {
+    public enum CharacterCodeTable: UInt8, Sendable {
         case pc437_USAAndStandardEurope         = 0
         case katakana                           = 1
         case pc850_Multilingual                 = 2
@@ -539,7 +539,7 @@ public enum ESCPOSCommand {
     }
     
     /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=34
-    public enum FontSize: UInt8 {
+    public enum FontSize: UInt8, Sendable {
         case normal     = 0
         case double     = 1
         case triple     = 2
@@ -551,7 +551,7 @@ public enum ESCPOSCommand {
     }
     
     /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=38
-    public enum CharacterColor: UInt8 {
+    public enum CharacterColor: UInt8, Sendable {
         case none       = 48
         case color1     = 49
         case color2     = 50
@@ -559,7 +559,7 @@ public enum ESCPOSCommand {
     }
     
     /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=55
-    public enum PrintDirection: UInt8 {
+    public enum PrintDirection: UInt8, Sendable {
         case leftToRight = 0
         case bottomToTop = 1
         case rightToLeft = 2
@@ -567,14 +567,14 @@ public enum ESCPOSCommand {
     }
     
     /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=58
-    public enum Justification: UInt8 {
+    public enum Justification: UInt8, Sendable {
         case left   = 0
         case center = 1
         case right  = 2
     }
     
     /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=64
-    public struct PaperEndSensors: OptionSet {
+    public struct PaperEndSensors: OptionSet, Sendable {
         public var rawValue: UInt8
         
         public static let nearEndSensor1 = PaperEndSensors(rawValue: 1 << 0)
