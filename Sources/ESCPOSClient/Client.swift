@@ -7,6 +7,7 @@
 
 import Foundation
 import Cescpos
+@_exported import ESCPOS
 
 public enum EscposPrintError: Int32, LocalizedError {
     case deviceNotFound = -1

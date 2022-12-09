@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import ESCPOS
+import ESCPOSClient
 
 let commands: [ESCPOSCommand] = [
     .justification(.center),

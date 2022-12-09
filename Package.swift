@@ -6,30 +6,44 @@ import PackageDescription
 let package = Package(
     name: "ECSPOS",
     platforms: [
-        .macOS(.v12)
+        .macOS(.v12),
     ],
     products: [
-        .executable(name: "ESCPOS-Example", targets: ["ESCPOS-Example"]),
-        .library(name: "ESCPOS", targets: ["ESCPOS"])
+        .executable(
+            name: "ESCPOS-Example",
+            targets: ["ESCPOS-Example"]
+        ),
+        .library(
+            name: "ESCPOS",
+            targets: ["ESCPOS"]
+        ),
+        .library(
+            name: "ESCPOSClient",
+            targets: ["ESCPOSClient"]
+        ),
     ],
-    dependencies: [
-        // Dependencies declare other packages that this package depends on.
-        // .package(url: /* package url */, from: "1.0.0"),
-    ],
+    dependencies: [],
     targets: [
         .target(name: "Cescpos", publicHeadersPath: "."),
         .target(
-            name: "ESCPOS",
+            name: "ESCPOS"
+        ),
+        .target(
+            name: "ESCPOSClient",
             dependencies: [
-                .byName(name: "Cescpos")
-            ]),
+                .byName(name: "Cescpos"),
+                .byName(name: "ESCPOS"),
+            ]
+        ),
         .executableTarget(
             name: "ESCPOS-Example",
             dependencies: [
-                .byName(name: "ESCPOS")
-            ]),
+                .byName(name: "ESCPOSClient"),
+            ]
+        ),
         .testTarget(
             name: "ESCPOSTests",
-            dependencies: ["ESCPOS"]),
+            dependencies: ["ESCPOS"]
+        ),
     ]
 )
