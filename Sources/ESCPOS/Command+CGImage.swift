@@ -1,5 +1,5 @@
 //
-//  ESCPOSCommand+CGImage.swift
+//  Command+CGImage.swift
 //  
 //
 //  Created by Jacob Ingalls on 6/26/22.
@@ -8,8 +8,8 @@
 import Foundation
 import CoreGraphics
 
-public extension ESCPOSCommand {
-    static func printMonochromePhoto(image cgImage: CGImage) throws -> ESCPOSCommand {
+public extension ESCPOS.Command {
+    static func printMonochromePhoto(image cgImage: CGImage) throws -> ESCPOS.Command {
         var bits: [[Bool]] = []
         let pointer = CFDataGetBytePtr(cgImage.dataProvider!.data)!
         let width = Int(cgImage.width)

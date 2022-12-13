@@ -10,8 +10,8 @@ import Foundation
 #if canImport(AppKit)
 import AppKit
 
-public extension ESCPOSCommand {
-    static func printMonochromePhoto(image: NSImage) throws -> ESCPOSCommand {
+public extension ESCPOS.Command {
+    static func printMonochromePhoto(image: NSImage) throws -> ESCPOS.Command {
         let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil)!
 
         return try printMonochromePhoto(image: cgImage)

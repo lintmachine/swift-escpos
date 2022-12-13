@@ -8,7 +8,7 @@
 import Foundation
 import ESCPOSClient
 
-let commands: [ESCPOSCommand] = [
+let commands: [ESCPOS.Command] = [
     .justification(.center),
     .characterSize(vertical: .double, horizontal: .double),
     .ascii("Hello, World!\n\n"),
