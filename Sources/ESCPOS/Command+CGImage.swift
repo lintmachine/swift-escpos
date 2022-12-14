@@ -26,34 +26,35 @@ public extension ESCPOS.Command {
             }
             bits.append(row)
         }
-        
+
         var data = [UInt8]()
         for row in bits {
-            
             var current: UInt8 = 0
             var bitsEncoded = 0
             for bit in row {
                 bitsEncoded += 1
                 current = (current << 1) + (bit ? 1 : 0)
-                
+
                 if bitsEncoded >= 8 {
                     data.append(current)
                     current = 0
                     bitsEncoded = 0
                 }
             }
-            
+
             if bitsEncoded > 0 {
                 current = (current << (8 - bitsEncoded))
                 data.append(current)
             }
         }
-        
+
         return .group([
-            .storeMonochromeRasterGraphicsDataInPrintBuffer(width: UInt16(cgImage.width),
-                                                            height: UInt16(cgImage.height),
-                                                            data: .init(data)),
-            .printGraphicsBuffer
+            .storeMonochromeRasterGraphicsDataInPrintBuffer(
+                width: UInt16(cgImage.width),
+                height: UInt16(cgImage.height),
+                data: .init(data)
+            ),
+            .printGraphicsBuffer,
         ])
     }
 }

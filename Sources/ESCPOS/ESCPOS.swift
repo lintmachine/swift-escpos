@@ -1,8 +1,9 @@
 import Foundation
 
-/// - See Also: https://www.epson-biz.com/modules/ref_escpos/index.php?cat_id=2
 public enum ESCPOS {
+    /// - See Also: https://www.epson-biz.com/modules/ref_escpos/index.php?cat_id=2
     public enum Command: Equatable, Sendable {
+
         // MARK: - Fallthrough Commands
         case raw(Data)
         case ascii(String)
@@ -296,12 +297,12 @@ public enum ESCPOS {
 
         public var dataValue: Data {
             switch self {
-            // Fallthrough
+                // Fallthrough
             case let .raw(data): return data
             case let .ascii(string): return string.data(using: .ascii, allowLossyConversion: true)!
             case let .group(commands): return commands.map(\.dataValue).reduce(Data(), +)
 
-            // Print Commands
+                // Print Commands
             case .printAndLineFeed: return .init([.LF])
             case .printAndReturnToStandardModeInPageMode: return .init([.FF])
             case .printAndCarriageReturn: return .init([.CR])
@@ -311,11 +312,11 @@ public enum ESCPOS {
             case let .printAndFeed(lines): return .init([.ESC, .d, lines])
             case let .printAndReverseFeed(lines): return .init([.ESC, .e, lines])
 
-            // Line Spacing Commands
+                // Line Spacing Commands
             case .setLineSpacingToDefault: return .init([.ESC, ._2])
             case let .setLineSpacing(amount): return .init([.ESC, ._3, amount])
 
-            // Character Commands
+                // Character Commands
             case .cancelPrintDataInPageMode: return .init([.CAN])
             case let .setRightSideCharacterSpacing(amount): return .init([.ESC, .SP, amount])
             case let .selectPrintMode(mode): return .init([.ESC, .BANG, mode.rawValue])
@@ -332,14 +333,14 @@ public enum ESCPOS {
             case let .inverseColors(bool): return .init([.GS, .B, bool ? 1 : 0])
             case let .fontSmoothing(bool): return .init([.GS, .b, bool ? 1 : 0])
 
-            // Character Commands - Character effects
+                // Character Commands - Character effects
             case let .characterColor(color): return .init([.GS, .LPRN, .N, 0x02, 0x00, 0x30, color.rawValue])
             case let .backgroundColor(color): return .init([.GS, .LPRN, .N, 0x02, 0x00, 0x31, color.rawValue])
             case let .characterShadow(bool, color): return .init([.GS, .LPRN, .N, 0x02, 0x00, 0x32, bool ? 1 : 0, color.rawValue])
 
-            // Character Commands - User-defined characters
+                // Character Commands - User-defined characters
             case let .useUserDefineCharacterSet(bool): return .init([.ESC, .PRCT, bool ? 1 : 0])
-            // TODO: ESC &
+                // TODO: ESC &
             case let .cancelUserDefinedCharacter(char): return .init([.ESC, .QSMK, char])
 
                 // Character Commands - Code conversion method
@@ -348,7 +349,7 @@ public enum ESCPOS {
                 // Printing Paper Commands - Label and black mark control
                 // TODO: FS ( L <Function 33, 34, 48, 65, 66, 67, 80>
 
-            // Print Position Commands
+                // Print Position Commands
             case .horizontalTab: return .init([.HT])
             case let .setAbsolutePrintPosition(amount): return .init([.ESC, .DLLR, amount.low, amount.high])
             case let .setHorizontalTabPositions(positions): return .init([.ESC, .D] + positions.prefix(32) + [.NUL])
@@ -364,217 +365,217 @@ public enum ESCPOS {
             case let .setRelativeVerticalPrintPositionInPageMode(distance): let d = UInt16(distance)
                 return .init([.GS, .BKSL, d.low, d.high])
 
-            // Paper Sensor Commands
+                // Paper Sensor Commands
             case let .selectPaperSensorsToOutputPaperEndSignals(sensors): return .init([.ESC, .c, ._3, sensors.rawValue])
             case let .selectPaperSensorsToStopPrinting(sensors): return .init([.ESC, .c, ._4, sensors.rawValue])
 
-            // Mechanism Control Commands
+                // Mechanism Control Commands
             case .returnHome: return .init([.ESC, .LT])
             case let .unidirectionalPrintMode(bool): return .init([.ESC, .U, bool ? 1 : 0])
 
-            // Bit Image Commands
+                // Bit Image Commands
             case .printGraphicsBuffer: return .init([.GS, .LPRN, .L, 0x02, 0x00, 0x30, 2])
             case let .storeMonochromeRasterGraphicsDataInPrintBuffer(w, h, d):
                 let len = 10 + UInt16(d.count)
                 return .init([.GS, .LPRN, .L, len.low, len.high, 0x30, 0x70, 48, 1, 1, 49, w.low, w.high, h.low, h.high] + d)
             }
         }
+    }
 
-        /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=23
-        public struct PrintMode: OptionSet, Sendable {
-            public let rawValue: UInt8
+    /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=23
+    public struct PrintMode: OptionSet, Sendable {
+        public let rawValue: UInt8
 
-            public static let alternateFont = PrintMode(rawValue: 1 << 0)
-            public static let emphasized = PrintMode(rawValue: 1 << 3)
-            public static let doubleHeight = PrintMode(rawValue: 1 << 4)
-            public static let doubleWidth = PrintMode(rawValue: 1 << 5)
-            public static let underlined = PrintMode(rawValue: 1 << 7)
+        public static let alternateFont = PrintMode(rawValue: 1 << 0)
+        public static let emphasized = PrintMode(rawValue: 1 << 3)
+        public static let doubleHeight = PrintMode(rawValue: 1 << 4)
+        public static let doubleWidth = PrintMode(rawValue: 1 << 5)
+        public static let underlined = PrintMode(rawValue: 1 << 7)
 
-            public static let `default`: PrintMode = []
+        public static let `default`: PrintMode = []
 
-            public init(rawValue: UInt8) {
-                self.rawValue = rawValue
-            }
+        public init(rawValue: UInt8) {
+            self.rawValue = rawValue
         }
+    }
 
-        /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=24
-        public enum UnderlineMode: UInt8, Sendable {
-            case off = 0
-            case thin = 1
-            case thick = 2
-        }
+    /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=24
+    public enum UnderlineMode: UInt8, Sendable {
+        case off = 0
+        case thin = 1
+        case thick = 2
+    }
 
-        /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=27
-        public enum CharacterFont: UInt8, Sendable {
-            case a = 0
-            case b = 1
-            case c = 2
-            case d = 3
-            case e = 4
-            case specialA = 97
-            case specialB = 98
-        }
+    /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=27
+    public enum CharacterFont: UInt8, Sendable {
+        case a = 0
+        case b = 1
+        case c = 2
+        case d = 3
+        case e = 4
+        case specialA = 97
+        case specialB = 98
+    }
 
-        /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=29
-        public enum InternationalCharacterSet: UInt8, Sendable {
-            case unitedStates = 0
-            case france = 1
-            case germany = 2
-            case unitedKingdom = 3
-            case denmark1 = 4
-            case sweden = 5
-            case italy = 6
-            case spain1 = 7
-            case japan = 8
-            case norway = 9
-            case denmark2 = 10
-            case spain2 = 11
-            case latinAmerica = 12
-            case korea = 13
-            case sloveniaOrCroatia = 14
-            case china = 15
-            case vietnam = 16
-            case arabia = 17
-            case indiaDevanagari = 66
-            case indiaBengali = 67
-            case indiaTamil = 68
-            case indiaTelugu = 69
-            case indiaAssamese = 70
-            case indiaOriya = 71
-            case indiaKannada = 72
-            case indiaMalayalam = 73
-            case indiaGujarati = 74
-            case indiaPunjabi = 75
-            case indiaMarathi = 82
-        }
+    /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=29
+    public enum InternationalCharacterSet: UInt8, Sendable {
+        case unitedStates = 0
+        case france = 1
+        case germany = 2
+        case unitedKingdom = 3
+        case denmark1 = 4
+        case sweden = 5
+        case italy = 6
+        case spain1 = 7
+        case japan = 8
+        case norway = 9
+        case denmark2 = 10
+        case spain2 = 11
+        case latinAmerica = 12
+        case korea = 13
+        case sloveniaOrCroatia = 14
+        case china = 15
+        case vietnam = 16
+        case arabia = 17
+        case indiaDevanagari = 66
+        case indiaBengali = 67
+        case indiaTamil = 68
+        case indiaTelugu = 69
+        case indiaAssamese = 70
+        case indiaOriya = 71
+        case indiaKannada = 72
+        case indiaMalayalam = 73
+        case indiaGujarati = 74
+        case indiaPunjabi = 75
+        case indiaMarathi = 82
+    }
 
-        /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=30
-        public enum RotationMode: UInt8, Sendable {
-            case off = 0
-            case enabledNarrow = 1
-            case enabledWide = 2
-        }
+    /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=30
+    public enum RotationMode: UInt8, Sendable {
+        case off = 0
+        case enabledNarrow = 1
+        case enabledWide = 2
+    }
 
-        /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=31
-        public enum PrintColor: UInt8, Sendable {
-            case black = 0
-            case red = 1
-        }
+    /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=31
+    public enum PrintColor: UInt8, Sendable {
+        case black = 0
+        case red = 1
+    }
 
-        /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=32
-        public enum CharacterCodeTable: UInt8, Sendable {
-            case pc437_USAAndStandardEurope = 0
-            case katakana = 1
-            case pc850_Multilingual = 2
-            case pc860_Portuguese = 3
-            case pc863_CanadianFrench = 4
-            case pc865_Nordic = 5
-            case hiragana = 6
-            case onepassPrintingKanjiCharacters1 = 7
-            case onepassPrintingKanjiCharacters2 = 8
-            case pc851_Greek = 11
-            case pc853_Turkish = 12
-            case pc857_Turkish = 13
-            case pc737_Greek = 14
-            case iso8859_7_Greek = 15
-            case wpc1252 = 16
-            case pc866_Cyrillic2 = 17
-            case pc852_Latin2 = 18
-            case pc858_Euro = 19
-            case thai_CharacterCode_42 = 20
-            case thai_CharacterCode_11 = 21
-            case thai_CharacterCode_13 = 22
-            case thai_CharacterCode_14 = 23
-            case thai_CharacterCode_16 = 24
-            case thai_CharacterCode_17 = 25
-            case thai_CharacterCode_18 = 26
-            case tcvn_3_Vietnamese1 = 30
-            case tcvn_3_Vietnamese2 = 31
-            case pc720_Arabic = 32
-            case wpc775_BalticRim = 33
-            case pc855_Cyrillic = 34
-            case pc861_Icelandic = 35
-            case pc862_Hebrew = 36
-            case pc864_Arabic = 37
-            case pc869_Greek = 38
-            case iso8859_2_Latin2 = 39
-            case iso8859_15_Latin9 = 40
-            case pc1098_Farsi = 41
-            case pc1118_Lithuanian = 42
-            case pc1119_Lithuanian = 43
-            case pc1125_Ukrainian = 44
-            case wpc1250_Latin2 = 45
-            case wpc1251_Cyrillic = 46
-            case wpc1253_Greek = 47
-            case wpc1254_Turkish = 48
-            case wpc1255_Hebrew = 49
-            case wpc1256_Arabic = 50
-            case wpc1257_BalticRim = 51
-            case wpc1258_Vietnamese = 52
-            case kz_1048_Kazakhstan = 53
-            case devanagari = 66
-            case bengali = 67
-            case tamil = 68
-            case telugu = 69
-            case assamese = 70
-            case oriya = 71
-            case kannada = 72
-            case malayalam = 73
-            case gujarati = 74
-            case punjabi = 75
-            case marathi = 82
-        }
+    /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=32
+    public enum CharacterCodeTable: UInt8, Sendable {
+        case pc437_USAAndStandardEurope = 0
+        case katakana = 1
+        case pc850_Multilingual = 2
+        case pc860_Portuguese = 3
+        case pc863_CanadianFrench = 4
+        case pc865_Nordic = 5
+        case hiragana = 6
+        case onepassPrintingKanjiCharacters1 = 7
+        case onepassPrintingKanjiCharacters2 = 8
+        case pc851_Greek = 11
+        case pc853_Turkish = 12
+        case pc857_Turkish = 13
+        case pc737_Greek = 14
+        case iso8859_7_Greek = 15
+        case wpc1252 = 16
+        case pc866_Cyrillic2 = 17
+        case pc852_Latin2 = 18
+        case pc858_Euro = 19
+        case thai_CharacterCode_42 = 20
+        case thai_CharacterCode_11 = 21
+        case thai_CharacterCode_13 = 22
+        case thai_CharacterCode_14 = 23
+        case thai_CharacterCode_16 = 24
+        case thai_CharacterCode_17 = 25
+        case thai_CharacterCode_18 = 26
+        case tcvn_3_Vietnamese1 = 30
+        case tcvn_3_Vietnamese2 = 31
+        case pc720_Arabic = 32
+        case wpc775_BalticRim = 33
+        case pc855_Cyrillic = 34
+        case pc861_Icelandic = 35
+        case pc862_Hebrew = 36
+        case pc864_Arabic = 37
+        case pc869_Greek = 38
+        case iso8859_2_Latin2 = 39
+        case iso8859_15_Latin9 = 40
+        case pc1098_Farsi = 41
+        case pc1118_Lithuanian = 42
+        case pc1119_Lithuanian = 43
+        case pc1125_Ukrainian = 44
+        case wpc1250_Latin2 = 45
+        case wpc1251_Cyrillic = 46
+        case wpc1253_Greek = 47
+        case wpc1254_Turkish = 48
+        case wpc1255_Hebrew = 49
+        case wpc1256_Arabic = 50
+        case wpc1257_BalticRim = 51
+        case wpc1258_Vietnamese = 52
+        case kz_1048_Kazakhstan = 53
+        case devanagari = 66
+        case bengali = 67
+        case tamil = 68
+        case telugu = 69
+        case assamese = 70
+        case oriya = 71
+        case kannada = 72
+        case malayalam = 73
+        case gujarati = 74
+        case punjabi = 75
+        case marathi = 82
+    }
 
-        /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=34
-        public enum FontSize: UInt8, Sendable {
-            case normal = 0
-            case double = 1
-            case triple = 2
-            case quadruple = 3
-            case quintuple = 4
-            case sextuple = 5
-            case septuple = 6
-            case octuple = 7
-        }
+    /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=34
+    public enum FontSize: UInt8, Sendable {
+        case normal = 0
+        case double = 1
+        case triple = 2
+        case quadruple = 3
+        case quintuple = 4
+        case sextuple = 5
+        case septuple = 6
+        case octuple = 7
+    }
 
-        /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=38
-        public enum CharacterColor: UInt8, Sendable {
-            case none = 48
-            case color1 = 49
-            case color2 = 50
-            case color3 = 51
-        }
+    /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=38
+    public enum CharacterColor: UInt8, Sendable {
+        case none = 48
+        case color1 = 49
+        case color2 = 50
+        case color3 = 51
+    }
 
-        /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=55
-        public enum PrintDirection: UInt8, Sendable {
-            case leftToRight = 0
-            case bottomToTop = 1
-            case rightToLeft = 2
-            case topToBottom = 3
-        }
+    /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=55
+    public enum PrintDirection: UInt8, Sendable {
+        case leftToRight = 0
+        case bottomToTop = 1
+        case rightToLeft = 2
+        case topToBottom = 3
+    }
 
-        /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=58
-        public enum Justification: UInt8, Sendable {
-            case left = 0
-            case center = 1
-            case right = 2
-        }
+    /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=58
+    public enum Justification: UInt8, Sendable {
+        case left = 0
+        case center = 1
+        case right = 2
+    }
 
-        /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=64
-        public struct PaperEndSensors: OptionSet, Sendable {
-            public var rawValue: UInt8
+    /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=64
+    public struct PaperEndSensors: OptionSet, Sendable {
+        public var rawValue: UInt8
 
-            public static let nearEndSensor1 = PaperEndSensors(rawValue: 1 << 0)
-            public static let nearEndSensor2 = PaperEndSensors(rawValue: 1 << 1)
-            public static let endSensor1 = PaperEndSensors(rawValue: 1 << 2)
-            public static let endSensor2 = PaperEndSensors(rawValue: 1 << 3)
+        public static let nearEndSensor1 = PaperEndSensors(rawValue: 1 << 0)
+        public static let nearEndSensor2 = PaperEndSensors(rawValue: 1 << 1)
+        public static let endSensor1 = PaperEndSensors(rawValue: 1 << 2)
+        public static let endSensor2 = PaperEndSensors(rawValue: 1 << 3)
 
-            public static let none: PaperEndSensors = []
-            public static let all: PaperEndSensors = [.nearEndSensor1, .nearEndSensor2, .endSensor1, .endSensor2]
+        public static let none: PaperEndSensors = []
+        public static let all: PaperEndSensors = [.nearEndSensor1, .nearEndSensor2, .endSensor1, .endSensor2]
 
-            public init(rawValue: UInt8) {
-                self.rawValue = rawValue
-            }
+        public init(rawValue: UInt8) {
+            self.rawValue = rawValue
         }
     }
 }
