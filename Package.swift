@@ -4,9 +4,10 @@
 import PackageDescription
 
 let package = Package(
-    name: "ECSPOS",
+    name: "swift-escpos",
     platforms: [
         .macOS(.v12),
+        .iOS(.v14)
     ],
     products: [
         .executable(

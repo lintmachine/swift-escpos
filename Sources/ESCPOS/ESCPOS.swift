@@ -527,6 +527,18 @@ public enum ESCPOS {
         case marathi = 82
     }
 
+    enum BarCodeSystem: UInt8, Sendable {
+        case upcA = 0
+        case upcE = 1
+        case jan13ean13 = 2
+        case jan8ean8 = 3
+        case code39 = 4
+        case itf = 5
+        case codabarNw7 = 6
+        case code93 = 72
+        case code128 = 73
+    }
+
     /// - Note: https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=34
     public enum FontSize: UInt8, Sendable {
         case normal = 0
